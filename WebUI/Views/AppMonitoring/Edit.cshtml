@@ -1,0 +1,141 @@
+﻿@model WebUI.Models.AppMonitoringViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<h4>AppMonitoringViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="form">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" class="form-control" id="IntervalId" name="IntervalId" placeholder="Enter IntervalId" value="@Model?.Internal?.IntervalId" />
+            <input type="hidden" class="form-control" id="UserId" name="UserId" placeholder="Enter UserId" value="@Model?.Internal?.UserId" />
+
+            <div class="form-group">
+                <label for="inputTime">Cron Expression</label>
+                <input type="text" class="form-control" id="inputTime" name="Time" placeholder="Enter Time" value="@Model?.Internal?.Time" />
+                <small id="inputTimeHelp" class="form-text text-muted">You can reschedule time according to cron expression</small>
+            </div>
+
+            <div class="form-group">
+
+            </div>
+
+
+            <div class="form-group">
+                <input value="Update" class="btn btn-primary" onclick="UpdateInternalTime()" />
+            </div>
+
+            <div class="form-group">
+                <input value="Start" class="btn btn-primary" onclick="StartCronJob()" />
+            </div>
+
+            <div class="form-group">
+                <input value="Stop" class="btn btn-primary" onclick="StopCronJob()" />
+            </div>
+        </form>
+
+        <hr />
+        <h3> Application Urls</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Application Name
+                    </th>
+                    <th>
+                        Url
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                </tr>                
+            </thead>
+            
+            <tbody>
+                @{
+                    foreach (var appliaiton in Model.Applications)
+                    {
+                <tr>
+                    <td>
+                        @appliaiton.ApplicationName
+                    </td>
+                    <td>
+                        @appliaiton.Url
+                    </td>
+                    <td>
+                        @appliaiton.Status.ToString()
+                    </td>
+                </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}    
+}
+
+<script>
+
+    function UpdateInternalTime() {
+
+        debugger;
+        var data = decodeURIComponent($("#form").serialize()).split("&");
+        console.log(data);
+        var obj = {};
+        for (var key in data) {
+            console.log(data[key]);
+            obj[data[key].split("=")[0]] = data[key].split("=")[1];
+        }
+
+        var interval = obj;
+  
+        $.ajax({
+            url: 'AppMonitoring/Edit',
+            type: 'POST',
+            dataType: 'JSON',
+            data: interval,
+            success: function (obj) {
+                alert("success")
+            }
+        })
+    }
+
+    function StartCronJob() {
+     
+        $.ajax({
+            url: 'AppMonitoring/StartCronJob',
+            type: 'POST',
+            
+            success: function (obj) {
+                alert("success")
+            }
+        })
+    }
+
+    function StopCronJob() {
+
+        $.ajax({
+            url: 'AppMonitoring/StopCronJob',
+            type: 'POST',
+
+            success: function (obj) {
+                alert("success")
+            }
+        })
+    }
+   
+</script>
