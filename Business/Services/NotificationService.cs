@@ -14,9 +14,13 @@ namespace Business.Services
 
         private readonly ILogService _logService;
 
-        public NotificationService(AppMonitoringContext dbContext, ILogService logService)
+        AppMonitoringSingletonContext _dbSingletonContext;
+
+
+        public NotificationService(AppMonitoringContext dbContext, AppMonitoringSingletonContext dbSingletonContext, ILogService logService)
         {
             _dbContext = dbContext;
+            _dbSingletonContext = dbSingletonContext;
             _logService = logService;
         }
 
@@ -41,7 +45,7 @@ namespace Business.Services
             {
                 User user = UserSevice.CreateUserSingleton();
 
-                return _dbContext.Notification.FirstOrDefault(x => x.UserId == user.UserId);
+                return _dbSingletonContext.Notification.FirstOrDefault(x => x.UserId == user.UserId);
             }
             catch (Exception ex)
             {

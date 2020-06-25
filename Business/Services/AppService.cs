@@ -17,9 +17,13 @@ namespace Business.Services
 
         private readonly ILogService _logService;
 
-        public AppService(AppMonitoringContext dbContext, ILogService logService)
+        AppMonitoringSingletonContext _dbSingletonContext;
+
+
+        public AppService(AppMonitoringContext dbContext, AppMonitoringSingletonContext dbSingletonContext, ILogService logService)
         {
             _dbContext = dbContext;
+            _dbSingletonContext = dbSingletonContext;
             _logService = logService;
         }
 
@@ -30,12 +34,13 @@ namespace Business.Services
         }
 
         public  List<App> GetAll()
-        {
+        {          
+
             try
             {
                 User user = UserSevice.CreateUserSingleton();
 
-                return  _dbContext.App.Where(x => x.UserId == user.UserId).ToList();
+                return _dbSingletonContext.App.Where(x => x.UserId == user.UserId).ToList();
             }
             catch (Exception ex)
             {
@@ -78,9 +83,9 @@ namespace Business.Services
         {
             try
             {
-                _dbContext.Entry(app).State = EntityState.Modified;
+                _dbSingletonContext.Entry(app).State = EntityState.Modified;
 
-                _dbContext.SaveChanges();
+                _dbSingletonContext.SaveChanges();
             }
             catch (Exception ex)
             {

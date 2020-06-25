@@ -42,6 +42,12 @@ namespace WebUI
                      sqlOptions.EnableRetryOnFailure();
                  }), ServiceLifetime.Transient);
 
+            services.AddDbContext<AppMonitoringSingletonContext>(options => options.UseSqlServer(Configuration.GetConnectionString("AppMonitoringContext"),
+                 sqlServerOptionsAction: sqlOptions =>
+                 {
+                     sqlOptions.EnableRetryOnFailure();
+                 }), ServiceLifetime.Singleton);
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddTransient<IIntervalService, IntervalService>();
